@@ -24,9 +24,6 @@ class Tag(models.Model):
 
 
 class Post(models.Model):
-    """
-    文章的数据库表稍微复杂一点，主要是涉及的字段更多。
-    """
 
     # 文章标题
     title = models.CharField(max_length=70)
@@ -53,10 +50,6 @@ class Post(models.Model):
     category = models.ForeignKey(Category)
     tags = models.ManyToManyField(Tag, blank=True)
 
-    # 文章作者，这里 User 是从 django.contrib.auth.models 导入的。
-    # django.contrib.auth 是 Django 内置的应用，专门用于处理网站用户的注册、登录等流程，User 是 Django 为我们已经写好的用户模型。
-    # 这里我们通过 ForeignKey 把文章和 User 关联了起来。
-    # 因为我们规定一篇文章只能有一个作者，而一个作者可能会写多篇文章，因此这是一对多的关联关系，和 Category 类似。
     author = models.ForeignKey(User)
 
     def __str__(self):
