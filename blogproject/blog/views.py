@@ -1,7 +1,8 @@
 import markdown
 from django.shortcuts import render,get_object_or_404
-from .models import Post
-
+from .models import Post,Category
+from comments.forms import CommentForm
+from comments.models import Comment
 
 app_name = 'blog'
 
@@ -17,4 +18,23 @@ def detail(request, pk):
                                      'markdown.extensions.codehilite',
                                      'markdown.extensions.toc',
                                   ])
-    return render(request, 'blog/detail.html', context={'post': post})
+    form = CommentForm()
+    comment_list = Comment.objects.filter(post = post)
+    context = {'post': post,
+               'form': form,
+               'comment_list': comment_list
+               }
+    return render(request, 'blog/detail.html', context=context)
+
+def archives(request, year, month):
+    post_list = Post.objects.filter(created_time__year=year,
+                                    created_time__month=month
+                                    ).order_by('-created_time')
+    return render(request, 'blog/index.html', context={'post_list': post_list})
+
+def category(request, pk):
+    cate = get_object_or_404(Category, pk = pk)
+    post_list = Post.objects.filter(category=cate).order_by('-created_time')
+    return render(request, 'blog/index.html', context={'post_list': post_list})
+
+
